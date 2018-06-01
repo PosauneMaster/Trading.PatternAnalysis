@@ -1,4 +1,5 @@
 ﻿using System;
+using Trading.Data;
 
 namespace Trading.PatternAnalysis
 {
@@ -6,6 +7,13 @@ namespace Trading.PatternAnalysis
     {
         static void Main(string[] args)
         {
+
+            string key = ConfigurationProvider.AlphaVantageKey;
+
+            var query = new AvRestQuery(key);
+            var result = query.GetDailyTimeSeries("MSFT").Result;
+
+
             Console.WriteLine("Hello World!");
         }
     }
