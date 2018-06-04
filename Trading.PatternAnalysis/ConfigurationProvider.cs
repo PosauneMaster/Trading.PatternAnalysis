@@ -14,11 +14,10 @@ namespace Trading.PatternAnalysis
                 .AddJsonFile("appsettings.json");
 
             Configuration = builder.Build();
-
         }
 
         public static string AlphaVantageKey => Configuration["alphavantagekey"];
-
+        public static string DoubleOutsideKeyReversalPath => Configuration["DoubleOutsideKeyReversalPath"];
 
     }
 }

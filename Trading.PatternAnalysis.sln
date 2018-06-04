@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2011
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.PatternAnalysis", "Trading.PatternAnalysis\Trading.PatternAnalysis.csproj", "{EF438E09-1E64-429F-988C-906FC386B9E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trading.PatternAnalysis", "Trading.PatternAnalysis\Trading.PatternAnalysis.csproj", "{EF438E09-1E64-429F-988C-906FC386B9E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Data", "Trading.Data\Trading.Data.csproj", "{0E263830-42FC-40C8-BC36-8777C8711CCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trading.Data", "Trading.Data\Trading.Data.csproj", "{0E263830-42FC-40C8-BC36-8777C8711CCB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{72226B63-EDE5-49D1-B7F3-7C01D961A0FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

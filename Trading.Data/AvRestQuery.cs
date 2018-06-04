@@ -5,7 +5,12 @@ using System.Threading.Tasks;
 
 namespace Trading.Data
 {
-    public class AvRestQuery
+    public interface IAvRestQuery
+    {
+        Task<string> GetDailyTimeSeries(string symbol, bool isCompact = true);
+    }
+
+    public class AvRestQuery : IAvRestQuery
     {
         private readonly HttpClient _client;
         private readonly string _apikey;
@@ -13,8 +18,7 @@ namespace Trading.Data
         public AvRestQuery(string apikey)
         {
             _apikey = apikey;
-            _client = new HttpClient();
-            _client.BaseAddress = new Uri("https://www.alphavantage.co/");
+            _client = new HttpClient {BaseAddress = new Uri("https://www.alphavantage.co/")};
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }

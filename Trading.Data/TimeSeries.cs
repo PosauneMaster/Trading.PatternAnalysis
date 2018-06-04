@@ -26,18 +26,28 @@ namespace Trading.Data
         public decimal Close { get; set; }
         public int Volume { get; set; }
 
+        public TimeSeries()
+        {
+        }
+
+        public TimeSeries(string symbol, JProperty jproperty, Interval interval)
+        {
+            Initialize(symbol, jproperty, interval);
+        }
+
         public void Initialize(string symbol, JProperty jproperty, Interval interval)
         {
+            Symbol = symbol;
             Interval = interval;
 
             DateTime.TryParse(jproperty.Name, out var dt);
             Timestamp = dt;
 
-            Open = jproperty["1. open"].Value<decimal>();
-            High = jproperty["2. high"].Value<decimal>();
-            Low = jproperty["3. low"].Value<decimal>();
-            Close = jproperty["4. close"].Value<decimal>();
-            Close = jproperty["5. volume"].Value<int>();
+            Open = jproperty.Value["1. open"].Value<decimal>();
+            High = jproperty.Value["2. high"].Value<decimal>();
+            Low = jproperty.Value["3. low"].Value<decimal>();
+            Close = jproperty.Value["4. close"].Value<decimal>();
+            Volume = jproperty.Value["6. volume"].Value<int>();
         }
 
 
