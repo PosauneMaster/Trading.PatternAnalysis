@@ -10,6 +10,8 @@ namespace Trading.PatternAnalysis
     public interface IBarchartService
     {
         TimeSeries[] FindOutsideDoubleKeyReversal(IEnumerable<TimeSeries> series);
+        TimeSeries[] FindPopgun(IEnumerable<TimeSeries> series);
+
     }
     public class BarchartService : IBarchartService
     {
@@ -38,6 +40,36 @@ namespace Trading.PatternAnalysis
                 currentSeriesNode = currentSeriesNode.Next;
             }
             return resultsList.ToArray();
+        }
+
+        public TimeSeries[] FindPopgun(IEnumerable<TimeSeries> series)
+        {
+            var resultsList = new List<TimeSeries>();
+            var sorted = series.OrderByDescending(s => s.Timestamp);
+            var linked = new LinkedList<TimeSeries>(sorted);
+
+            var currentSeriesNode = linked.First;
+            while (currentSeriesNode?.Next != null)
+            {
+                if (currentSeriesNode.Previous != null)
+                {
+                    if (IsMiddleInside(currentSeriesNode.Next.Value, currentSeriesNode.Value,
+                        currentSeriesNode.Previous.Value))
+                    {
+                        resultsList.Add(currentSeriesNode.Value);
+                    }
+                }
+                currentSeriesNode = currentSeriesNode.Next;
+            }
+
+            return resultsList.ToArray();
+        }
+
+        private bool IsMiddleInside(TimeSeries left, TimeSeries middle, TimeSeries right)
+        {
+            var insideLeft = middle.High < left.High && middle.Low > left.Low;
+            var insideRight = middle.High < right.High && middle.Low > right.Low;
+            return insideLeft && insideRight;
         }
 
         private bool IsOutsideBar(TimeSeries timeSeries1, TimeSeries timeSeries2)

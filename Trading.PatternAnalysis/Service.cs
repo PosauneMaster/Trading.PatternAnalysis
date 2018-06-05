@@ -9,24 +9,25 @@ namespace Trading.PatternAnalysis
 {
     public class Service
     {
-        private readonly IAvRestQuery _query;
         private readonly ITradingDataApi _api;
         private readonly IBarchartService _barchartService;
 
         public Service()
         {
             _barchartService = new BarchartService();
-            _query = new AvRestQuery(ConfigurationProvider.AlphaVantageKey);
-            _api = new TradingDataApi(_query);
-
+            IAvRestQuery query = new AvRestQuery(ConfigurationProvider.AlphaVantageKey);
+            _api = new TradingDataApi(query);
         }
 
         public void Run(string[] symbols)
         {
             var sbKeyReversals = new StringBuilder();
+            var sbPopguns = new StringBuilder();
 
             foreach (var symbol in symbols)
             {
+                Console.WriteLine($"Evaluating Symbol {symbol}");
+
                 Thread.Sleep(2000);
 
                 var result = _api.GetDailyTimeSeries(symbol);
@@ -37,6 +38,10 @@ namespace Trading.PatternAnalysis
                 }
 
                 var keyReversals = _barchartService.FindOutsideDoubleKeyReversal(result);
+                Console.WriteLine($"Found {keyReversals.Length} Key Reversals for Symbol {symbol}");
+
+                var popguns = _barchartService.FindPopgun(result);
+                Console.WriteLine($"Found {popguns.Length} Popguns for Symbol {symbol}");
 
                 foreach (var ts in keyReversals)
                 {
@@ -45,14 +50,25 @@ namespace Trading.PatternAnalysis
                     Debug.WriteLine(message);
                 }
 
-                sbKeyReversals.AppendLine();
+                foreach (var ts in popguns)
+                {
+                    var message = $"Symbol={ts.Symbol}; Date={ts.Timestamp:yyyy-MM-dd}";
+                    sbPopguns.AppendLine(message);
+                    Debug.WriteLine(message);
+                }
 
+                sbKeyReversals.AppendLine();
+                sbPopguns.AppendLine();
             }
 
-            string filename = Path.Combine(ConfigurationProvider.DoubleOutsideKeyReversalPath,
+            string kr = Path.Combine(ConfigurationProvider.DoubleOutsideKeyReversalPath,
                 $"KeyReversals_{DateTime.Now:yyyyMMddHHmmss}.txt");
 
-            File.WriteAllText(filename, sbKeyReversals.ToString());
+            string pg = Path.Combine(ConfigurationProvider.DoubleOutsideKeyReversalPath,
+                $"Popguns_{DateTime.Now:yyyyMMddHHmmss}.txt");
+
+            File.WriteAllText(kr, sbKeyReversals.ToString());
+            File.WriteAllText(pg, sbPopguns.ToString());
 
         }
     }
