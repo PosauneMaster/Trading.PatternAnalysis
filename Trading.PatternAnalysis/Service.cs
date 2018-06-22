@@ -83,7 +83,6 @@ namespace Trading.PatternAnalysis
                 sbResults.AppendLine(strategyResults.GetLine());
             }
 
-
             string sr = Path.Combine(ConfigurationProvider.DoubleOutsideKeyReversalPath,
                 $"CurrentResults_{DateTime.Now:yyyyMMddHHmmss}.txt");
 
