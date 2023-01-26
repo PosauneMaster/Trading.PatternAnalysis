@@ -23,8 +23,11 @@ namespace Trading.PatternAnalysis
 
         public void Run(string[] symbols)
         {
+            var keyReversalTickers = new HashSet<string>();
+            var popGunTickers = new HashSet<string>();
+
             var latestList = new List<StrategyResults>();
-            var results = latestList.OrderBy(t => t.Symbol).ThenBy(t => t.StrategyName);
+            var results = latestList.OrderBy(t => t.Symbol).ThenBy(t => t.StrategyName).ToList();
 
 
             var sbKeyReversals = new StringBuilder();
@@ -32,6 +35,7 @@ namespace Trading.PatternAnalysis
 
             foreach (var symbol in symbols)
             {
+
                 Console.WriteLine($"Evaluating Symbol {symbol}");
 
                 Thread.Sleep(2000);
@@ -59,6 +63,11 @@ namespace Trading.PatternAnalysis
                     {
                         latestList.Add(new StrategyResults() {Symbol = ts.Symbol, StrategyDate = ts.Timestamp, StrategyName = "Key Reversal"});
                     }
+
+                    if (!keyReversalTickers.Contains(ts.Symbol))
+                    {
+                        keyReversalTickers.Add(ts.Symbol);
+                    }
                 }
 
                 foreach (var ts in popguns)
@@ -71,6 +80,12 @@ namespace Trading.PatternAnalysis
                     {
                         latestList.Add(new StrategyResults() { Symbol = ts.Symbol, StrategyDate = ts.Timestamp, StrategyName = "Pop Gun" });
                     }
+
+                    if (!popGunTickers.Contains(ts.Symbol))
+                    {
+                        popGunTickers.Add(ts.Symbol);
+                    }
+
                 }
 
                 sbKeyReversals.AppendLine();
@@ -83,14 +98,32 @@ namespace Trading.PatternAnalysis
                 sbResults.AppendLine(strategyResults.GetLine());
             }
 
-            string sr = Path.Combine(ConfigurationProvider.DoubleOutsideKeyReversalPath,
-                $"CurrentResults_{DateTime.Now:yyyyMMddHHmmss}.txt");
+            var todayDirectory = Path.Combine(ConfigurationProvider.DoubleOutsideKeyReversalPath, $"{DateTime.Now:yyyyMMdd}");
+            if (!Directory.Exists(todayDirectory))
+            {
+                Directory.CreateDirectory(todayDirectory);
+            }
 
-            string kr = Path.Combine(ConfigurationProvider.DoubleOutsideKeyReversalPath,
-                $"KeyReversals_{DateTime.Now:yyyyMMddHHmmss}.txt");
+            var importList = new List<string>();
+            importList.Add("###Double Close Key Reversals");
+            foreach (var ticker in keyReversalTickers)
+            {
+                importList.Add(ticker);
+            }
 
-            string pg = Path.Combine(ConfigurationProvider.DoubleOutsideKeyReversalPath,
-                $"Popguns_{DateTime.Now:yyyyMMddHHmmss}.txt");
+            importList.Add("###Pop Guns");
+            foreach (var ticker in popGunTickers)
+            {
+                importList.Add(ticker);
+            }
+
+            var importFileContents = String.Join(',', importList);
+            var importFilePath = Path.Combine(todayDirectory, $"StrategyList_{DateTime.Now:yyyyMMdd}.txt");
+            File.WriteAllText(importFilePath, importFileContents);
+
+            string sr = Path.Combine(todayDirectory, $"CurrentResults_{DateTime.Now:yyyyMMddHHmmss}.txt");
+            string kr = Path.Combine(todayDirectory,$"KeyReversals_{DateTime.Now:yyyyMMddHHmmss}.txt");
+            string pg = Path.Combine(todayDirectory,$"Popguns_{DateTime.Now:yyyyMMddHHmmss}.txt");
 
             File.WriteAllText(kr, sbKeyReversals.ToString());
             File.WriteAllText(pg, sbPopguns.ToString());

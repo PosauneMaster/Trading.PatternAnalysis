@@ -39,7 +39,7 @@ namespace Trading.PatternAnalysis
 
                 currentSeriesNode = currentSeriesNode.Next;
             }
-            return resultsList.ToArray();
+            return resultsList.Where(t => t.Timestamp > DateTime.Now.AddDays(-7)).ToArray();
         }
 
         public TimeSeries[] FindPopgun(IEnumerable<TimeSeries> series)
@@ -62,7 +62,7 @@ namespace Trading.PatternAnalysis
                 currentSeriesNode = currentSeriesNode.Next;
             }
 
-            return resultsList.ToArray();
+            return resultsList.Where(t => t.Timestamp > DateTime.Now.AddDays(-7)).ToArray();
         }
 
         private bool IsMiddleInside(TimeSeries left, TimeSeries middle, TimeSeries right)
